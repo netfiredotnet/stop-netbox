@@ -1,4 +1,4 @@
-module github.com/netfiredotnet/stop-netbox/netbox
+module github.com/netfiredotnet/stop-netbox
 
 go 1.18
 
