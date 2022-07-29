@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"reflect"
 )
 
 
@@ -4197,7 +4198,7 @@ func (a *IpamApiService) IpamPrefixesDeleteExecute(r ApiIpamPrefixesDeleteReques
 type ApiIpamPrefixesListRequest struct {
 	ctx context.Context
 	ApiService *IpamApiService
-	id *string
+	id *[]string
 	isPool *string
 	created *string
 	createdGte *string
@@ -4272,7 +4273,7 @@ type ApiIpamPrefixesListRequest struct {
 	offset *int32
 }
 
-func (r ApiIpamPrefixesListRequest) Id(id string) ApiIpamPrefixesListRequest {
+func (r ApiIpamPrefixesListRequest) Id(id []string) ApiIpamPrefixesListRequest {
 	r.id = &id
 	return r
 }
@@ -4678,7 +4679,15 @@ func (a *IpamApiService) IpamPrefixesListExecute(r ApiIpamPrefixesListRequest) (
 	localVarFormParams := url.Values{}
 
 	if r.id != nil {
-		localVarQueryParams.Add("id", parameterToString(*r.id, ""))
+		t := *r.id
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				localVarQueryParams.Add("id", parameterToString(s.Index(i), "multi"))
+			}
+		} else {
+			localVarQueryParams.Add("id", parameterToString(t, "multi"))
+		}
 	}
 	if r.isPool != nil {
 		localVarQueryParams.Add("is_pool", parameterToString(*r.isPool, ""))
